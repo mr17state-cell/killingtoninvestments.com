@@ -207,7 +207,7 @@ section {
   position: relative;
   width: min(1180px, calc(100vw - 44px));
   margin: 0 auto;
-  padding: clamp(90px, 12vw, 138px) 0 clamp(52px, 7vw, 84px);
+  padding: clamp(90px, 12vw, 138px) 0 clamp(72px, 8vw, 108px);
 }
 
 .hero-meta {
