@@ -3,6 +3,10 @@ const progressBar = document.querySelector(".scroll-progress");
 const accessForm = document.querySelector("#access-form");
 const accessFormStatus = document.querySelector("#access-form-status");
 const accessEmail = "alex@killingtontechnologies.com";
+const countUps = document.querySelectorAll(".count-up");
+const prefersReducedMotion = window.matchMedia(
+  "(prefers-reduced-motion: reduce)",
+).matches;
 
 const onScroll = () => {
   const y = window.scrollY;
@@ -42,6 +46,57 @@ if ("IntersectionObserver" in window && revealables.length) {
   revealables.forEach((el) => io.observe(el));
 } else {
   revealables.forEach((el) => el.classList.add("is-in"));
+}
+
+const formatCount = (value) => Math.round(value).toLocaleString("en-US");
+
+const animateCountUp = (el) => {
+  if (el.dataset.counted === "true") return;
+
+  const target = Number(el.dataset.countTarget || "0");
+  if (!Number.isFinite(target)) return;
+
+  el.dataset.counted = "true";
+
+  if (prefersReducedMotion) {
+    el.textContent = formatCount(target);
+    return;
+  }
+
+  const duration = 1350;
+  const start = performance.now();
+
+  const tick = (now) => {
+    const elapsed = Math.min(1, (now - start) / duration);
+    const eased = 1 - Math.pow(1 - elapsed, 3);
+    el.textContent = formatCount(target * eased);
+
+    if (elapsed < 1) {
+      requestAnimationFrame(tick);
+    } else {
+      el.textContent = formatCount(target);
+    }
+  };
+
+  requestAnimationFrame(tick);
+};
+
+if ("IntersectionObserver" in window && countUps.length) {
+  const countIo = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          animateCountUp(entry.target);
+          countIo.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.7 },
+  );
+
+  countUps.forEach((el) => countIo.observe(el));
+} else {
+  countUps.forEach(animateCountUp);
 }
 
 accessForm?.addEventListener("submit", (event) => {
