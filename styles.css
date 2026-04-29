@@ -377,6 +377,40 @@ h3 {
   min-height: 5.2em;
 }
 
+.focus-areas {
+  display: grid;
+  gap: 1px;
+  margin: 36px 0 34px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.focus-areas div {
+  display: grid;
+  grid-template-columns: minmax(175px, 0.45fr) minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+  padding: 22px 24px;
+  background: rgba(255, 255, 255, 0.66);
+}
+
+.focus-areas span {
+  color: var(--navy);
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.focus-areas p {
+  margin: 0;
+  color: #393544;
+  font-size: 15.5px;
+  line-height: 1.55;
+}
+
 .approach-facts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -766,8 +800,13 @@ h3 {
   }
 
   .form-grid,
-  .approach-facts {
+  .approach-facts,
+  .focus-areas div {
     grid-template-columns: 1fr;
+  }
+
+  .focus-areas div {
+    gap: 10px;
   }
 
   .team-single article {
