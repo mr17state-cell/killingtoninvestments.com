@@ -3,6 +3,7 @@ const progressBar = document.querySelector(".scroll-progress");
 const accessForm = document.querySelector("#access-form");
 const accessFormStatus = document.querySelector("#access-form-status");
 const accessEmail = "alex@killingtontechnologies.com";
+const accessFormEndpoint = `https://formsubmit.co/ajax/${accessEmail}`;
 const countUps = document.querySelectorAll(".count-up");
 const prefersReducedMotion = window.matchMedia(
   "(prefers-reduced-motion: reduce)",
@@ -99,7 +100,27 @@ if ("IntersectionObserver" in window && countUps.length) {
   countUps.forEach(animateCountUp);
 }
 
-accessForm?.addEventListener("submit", (event) => {
+const showAccessFormError = () => {
+  if (!accessFormStatus) return;
+
+  accessFormStatus.textContent = "We couldn't send your request. Email ";
+  const emailLink = document.createElement("a");
+  emailLink.href = `mailto:${accessEmail}`;
+  emailLink.textContent = accessEmail;
+  accessFormStatus.append(emailLink, ".");
+  accessFormStatus.dataset.state = "error";
+};
+
+const submittedViaFallback = new URLSearchParams(window.location.search).has(
+  "submitted",
+);
+if (submittedViaFallback && accessFormStatus) {
+  accessFormStatus.textContent = "Thank you. Your request has been sent.";
+  accessFormStatus.dataset.state = "success";
+  window.history.replaceState({}, "", `${window.location.pathname}#contact`);
+}
+
+accessForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   if (!accessForm.checkValidity()) {
@@ -107,30 +128,45 @@ accessForm?.addEventListener("submit", (event) => {
     return;
   }
 
+  const submitButton = accessForm.querySelector('button[type="submit"]');
   const formData = new FormData(accessForm);
-  const name = String(formData.get("name") || "").trim();
-  const email = String(formData.get("email") || "").trim();
-  const organization = String(formData.get("organization") || "").trim();
-  const message = String(formData.get("message") || "").trim();
 
-  const body = [
-    "Investor access request",
-    "",
-    `Name: ${name}`,
-    `Email: ${email}`,
-    organization ? `Organization: ${organization}` : "Organization:",
-    "",
-    "Requested materials or access level:",
-    message || "Please provide access to the Killington private data room.",
-  ].join("\n");
+  if (String(formData.get("_honey") || "").trim()) return;
 
-  const subject = encodeURIComponent(`Investor access request - ${name}`);
-  const encodedBody = encodeURIComponent(body);
-
-  window.location.href = `mailto:${accessEmail}?subject=${subject}&body=${encodedBody}`;
-
+  if (submitButton instanceof HTMLButtonElement) {
+    submitButton.disabled = true;
+    submitButton.textContent = "Sending";
+  }
+  accessForm.setAttribute("aria-busy", "true");
   if (accessFormStatus) {
-    accessFormStatus.textContent =
-      "Your email client should open with the access request prepared.";
+    accessFormStatus.textContent = "Sending your request...";
+    delete accessFormStatus.dataset.state;
+  }
+
+  try {
+    const response = await fetch(accessFormEndpoint, {
+      method: "POST",
+      headers: { Accept: "application/json" },
+      body: formData,
+    });
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok || result.success === "false") {
+      throw new Error("Contact request was not accepted");
+    }
+
+    accessForm.reset();
+    if (accessFormStatus) {
+      accessFormStatus.textContent = "Thank you. Your request has been sent.";
+      accessFormStatus.dataset.state = "success";
+    }
+  } catch {
+    showAccessFormError();
+  } finally {
+    accessForm.removeAttribute("aria-busy");
+    if (submitButton instanceof HTMLButtonElement) {
+      submitButton.disabled = false;
+      submitButton.textContent = "Request access";
+    }
   }
 });

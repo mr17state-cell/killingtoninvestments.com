@@ -61,7 +61,7 @@
       href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500;600&display=swap"
       rel="stylesheet"
     >
-    <link rel="stylesheet" href="styles.css?v=26">
+    <link rel="stylesheet" href="styles.css?v=27">
   </head>
   <body>
     <div class="scroll-progress" aria-hidden="true"></div>
@@ -188,10 +188,16 @@
         <form
           id="access-form"
           class="access-form reveal"
-          action="mailto:alex@killingtontechnologies.com"
+          action="https://formsubmit.co/alex@killingtontechnologies.com"
           method="post"
-          enctype="text/plain"
         >
+          <input type="hidden" name="_subject" value="New Killington website contact request">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_next" value="https://killingtoninvestments.com/?submitted=1#contact">
+          <label class="form-honeypot" hidden>
+            <span>Leave this field empty</span>
+            <input name="_honey" type="text" tabindex="-1" autocomplete="off">
+          </label>
           <p class="access-intro">
             Fund materials are distributed privately to approved recipients.
             Use this form to request access, ask a question, or contact the firm.
@@ -247,6 +253,6 @@
       </div>
     </footer>
 
-    <script src="script.js?v=6"></script>
+    <script src="script.js?v=7"></script>
   </body>
 </html>
