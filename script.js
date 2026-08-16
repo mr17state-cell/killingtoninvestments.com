@@ -2,8 +2,8 @@ const header = document.querySelector(".site-header");
 const progressBar = document.querySelector(".scroll-progress");
 const accessForm = document.querySelector("#access-form");
 const accessFormStatus = document.querySelector("#access-form-status");
-const accessEmail = "alex@killingtontechnologies.com";
-const accessFormEndpoint = `https://formsubmit.co/ajax/${accessEmail}`;
+const accessFormEndpoint =
+  "https://formsubmit.co/ajax/d8d72dc4eef7a47f1f749b4c3f34ac20";
 const countUps = document.querySelectorAll(".count-up");
 const prefersReducedMotion = window.matchMedia(
   "(prefers-reduced-motion: reduce)",
@@ -103,11 +103,8 @@ if ("IntersectionObserver" in window && countUps.length) {
 const showAccessFormError = () => {
   if (!accessFormStatus) return;
 
-  accessFormStatus.textContent = "We couldn't send your request. Email ";
-  const emailLink = document.createElement("a");
-  emailLink.href = `mailto:${accessEmail}`;
-  emailLink.textContent = accessEmail;
-  accessFormStatus.append(emailLink, ".");
+  accessFormStatus.textContent =
+    "We couldn't send your request. Please try again later.";
   accessFormStatus.dataset.state = "error";
 };
 
